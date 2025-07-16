@@ -78,3 +78,5 @@ model.learn(total_timesteps=args["total_timesteps"],
             callback=[HParamCallback(CONFIG), TensorboardCallback(1), CheckpointCallback(
                 save_freq=args["total_timesteps"] // args["num_checkpoints"],
                 save_path=model_dir, name_prefix="model")], reset_num_timesteps=False)
+
+print(f"Model saved to {model_dir}")

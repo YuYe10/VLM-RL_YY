@@ -6,6 +6,27 @@ from stable_baselines3.common.buffers import DictReplayBuffer, DictRolloutBuffer
 
 
 class CLIPReplayBuffer(DictReplayBuffer):
+    """
+    CLIPReplayBuffer extends DictReplayBuffer to store additional information for each transition,
+    such as render arrays and various reward-related factors.
+    Attributes:
+        render_arrays (List[np.ndarray]): Stores rendered arrays from the environment for each transition.
+        base_rewards (List): Stores the base reward for each transition.
+        centering_factors (List): Stores centering factors for each transition.
+        angle_factors (List): Stores angle factors for each transition.
+        speeds (List): Stores speed values for each transition.
+        distance_std_factors (List): Stores distance standard deviation factors for each transition.
+    Methods:
+        __init__(buffer_size, observation_space, action_space, device="auto", n_envs=1, 
+                 optimize_memory_usage=False, handle_timeout_termination=True):
+            Initializes the replay buffer and additional storage lists.
+        add(obs, next_obs, action, reward, done, infos):
+            Adds a new transition to the buffer, including extra information from infos.
+        clear_render_arrays():
+            Clears all additional storage lists (render_arrays, base_rewards, centering_factors,
+            angle_factors, speeds, distance_std_factors).
+    """
+
     def __init__(
             self,
             buffer_size: int,

@@ -10,6 +10,7 @@ import torch.nn as nn
 import gymnasium as gym
 import torch
 
+MODEL_URL = "ViT-g-14/laion2b_s12b_b42k"
 
 class CustomCNN(nn.Module):
     def __init__(self, input_shape, features_dim=1):
@@ -103,7 +104,8 @@ algorithm_params = {
                            net_arch=[dict(pi=[500, 300], vf=[500, 300])],
                            features_extractor_class=CustomMultiInputExtractor,
                            features_extractor_kwargs=dict(features_dim=256),
-                           )
+                           ),
+        gradient_accumulation_steps=32
     ),
     "SAC": dict(
         device="cuda:0",
@@ -118,6 +120,7 @@ algorithm_params = {
         learning_starts=10000,
         use_sde=True,
         policy_kwargs=dict(log_std_init=-3, net_arch=[400, 300]),
+        gradient_accumulation_steps=32
     ),
     "DDPG": dict(
         device="cuda:0",
@@ -128,6 +131,7 @@ algorithm_params = {
         gradient_steps=-1,
         learning_rate=lr_schedule(5e-4, 1e-6, 2),
         policy_kwargs=dict(net_arch=[400, 300]),
+        gradient_accumulation_steps=32
     ),
     "SAC_CLIP": dict(
         device="cuda:0",
@@ -145,7 +149,8 @@ algorithm_params = {
             log_std_init=-3, net_arch=[500, 300],
             features_extractor_class=CustomMultiInputExtractor,
             features_extractor_kwargs=dict(features_dim=256),
-        )
+        ),
+        gradient_accumulation_steps=32
     ),
 }
 
@@ -189,7 +194,7 @@ reward_params = {
         penalty_reward=-10,
     ),
     "reward_clg": dict(
-        pretrained_model="ViT-bigG-14/laion2b_s39b_b160k",
+        pretrained_model=MODEL_URL,
         batch_size=64,
         target_prompts=[
             "Two cars have collided with each other on the road",
@@ -197,14 +202,14 @@ reward_params = {
         ],
     ),
     "reward_lord": dict(
-        pretrained_model="ViT-bigG-14/laion2b_s39b_b160k",
+        pretrained_model=MODEL_URL,
         batch_size=64,
         target_prompts=[
             "Two cars have collided with each other on the road",
         ],
     ),
     "reward_vlm_rm": dict(
-        pretrained_model="ViT-bigG-14/laion2b_s39b_b160k",
+        pretrained_model=MODEL_URL,
         batch_size=64,
         alpha=0.5,
         target_prompts=[
