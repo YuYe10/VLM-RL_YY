@@ -38,7 +38,7 @@ COLOR_ALUMINIUM_0 = (238, 238, 236)
 COLOR_ALUMINIUM_3 = (136, 138, 133)
 COLOR_ALUMINIUM_5 = (46, 52, 54)
 
-
+# 界面美化，亮度调整
 def tint(color, factor):
     r, g, b = color
     r = int(r + (255 - r) * factor)
@@ -49,7 +49,7 @@ def tint(color, factor):
     b = min(b, 255)
     return (r, g, b)
 
-
+# 动作取值映射
 discrete_actions = {
     0: [-1.0, 0.0],
     1: [0.7, -0.5],
@@ -82,14 +82,14 @@ discrete_actions = {
     28: [0.0, 0.6],
     29: [0.0, 1.0],
 }
-
+# 车辆蓝图
 class_blueprint = {
     'car': ['vehicle.tesla.model3',
             'vehicle.audi.tt',
             'vehicle.chevrolet.impala', ]
 }
 
-
+# 随机生成车辆
 def random_choice_from_blueprint(blueprint):
     all_elements = [item for sublist in blueprint.values() for item in sublist]
     return random.choice(all_elements)
@@ -101,7 +101,8 @@ class CarlaRouteEnv(gym.Env):
     }
 
     def __init__(self, host="127.0.0.1", port=2000,
-                 viewer_res=(1120, 560), obs_res=(80, 120),
+                 viewer_res=(1120, 560), # 可视化窗口分辨率
+                 obs_res=(80, 120), # 观测窗口分辨率
                  reward_fn=None,
                  observation_space=None,
                  encode_state_fn=None,
@@ -146,6 +147,7 @@ class CarlaRouteEnv(gym.Env):
 
         # Setup gym environment
         self.action_space_type = action_space_type
+        # 连续或离散动作空间
         if self.action_space_type == "continuous":
             self.action_space = gym.spaces.Box(np.array([-1, -1]), np.array([1, 1]),
                                                dtype=np.float32)  # steer, throttle
@@ -301,16 +303,17 @@ class CarlaRouteEnv(gym.Env):
         return obs
 
     def new_route(self):
+        # 清理旧的交通流车辆
         if self.activate_traffic_flow:
             for bg_veh in list(self.traffic_flow_vehicles):
                 if bg_veh.is_alive:
                     bg_veh.destroy()
                     self.traffic_flow_vehicles.remove(bg_veh)
-
+        # 重置车辆控制
         self.vehicle.control.steer = float(0.0)
         self.vehicle.control.throttle = float(0.0)
         self.vehicle.set_simulate_physics(False)
-
+        # 获取新的起始和结束路点
         if not self.eval:
             if self.episode_idx % 2 == 0 and self.num_routes_completed == -1:
                 spawn_points_list = [self.world.map.get_spawn_points()[index] for index in next(intersection_routes)]
@@ -326,7 +329,7 @@ class CarlaRouteEnv(gym.Env):
             route_length = len(self.route_waypoints)
             if route_length <= 1:
                 spawn_points_list = np.random.choice(self.world.map.get_spawn_points(), 2, replace=False)
-
+        # 设置车辆起始位置和路点
         self.distance_from_center_history = deque(maxlen=30)
 
         self.current_waypoint_index = 0
@@ -334,7 +337,7 @@ class CarlaRouteEnv(gym.Env):
         self.vehicle.set_transform(self.start_wp.transform)
         time.sleep(0.2)
         self.vehicle.set_simulate_physics(True)
-
+        # 设置当前路点和下一个路点
         if self.activate_traffic_flow:
             spawn_points = self.world.get_map().get_spawn_points()
             number_of_vehicles = min(len(spawn_points), self.tf_num)  # Adjust the number of vehicles as needed

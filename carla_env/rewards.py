@@ -5,14 +5,14 @@ import numpy as np
 from config import CONFIG
 
 
-min_speed = CONFIG.reward_params.min_speed
-max_speed = CONFIG.reward_params.max_speed
-target_speed = CONFIG.reward_params.target_speed
-max_distance = CONFIG.reward_params.max_distance
-max_std_center_lane = CONFIG.reward_params.max_std_center_lane
-max_angle_center_lane = CONFIG.reward_params.max_angle_center_lane
-penalty_reward = CONFIG.reward_params.penalty_reward
-early_stop = CONFIG.reward_params.early_stop
+min_speed = CONFIG.reward_params.min_speed #最小速度
+max_speed = CONFIG.reward_params.max_speed #最大速度
+target_speed = CONFIG.reward_params.target_speed #目标速度
+max_distance = CONFIG.reward_params.max_distance #最大距离
+max_std_center_lane = CONFIG.reward_params.max_std_center_lane #最大中心车道标准差
+max_angle_center_lane = CONFIG.reward_params.max_angle_center_lane #最大中心车道角度
+penalty_reward = CONFIG.reward_params.penalty_reward #惩罚奖励
+early_stop = CONFIG.reward_params.early_stop #是否早停
 reward_functions = {}
 
 

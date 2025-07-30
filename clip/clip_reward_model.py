@@ -30,6 +30,42 @@ class CLIPEmbed(nn.Module):
 
 
 class CLIPReward(nn.Module):
+    """
+    CLIPReward is a PyTorch module for computing reward signals using CLIP-based embeddings for various vision-language model (VLM) reward types.
+    Args:
+        model (CLIPEmbed): The CLIP embedding module used to encode prompts and images.
+        alpha (float): Interpolation parameter for projection computation.
+        target_prompts (torch.Tensor): Tokenized or embedded target prompts.
+        baseline_prompts (torch.Tensor): Tokenized or embedded baseline prompts.
+    Attributes:
+        clip_embed_module (CLIPEmbed): The CLIP embedding module.
+        targets (torch.Tensor): Embedded target prompts.
+        baselines (torch.Tensor): Embedded baseline prompts (if provided).
+        direction (torch.Tensor): Direction vector between targets and baselines (if baselines provided).
+        alpha (float): Interpolation parameter for projection computation.
+        projection (torch.Tensor): Projection matrix computed from direction and alpha (if baselines provided).
+    Methods:
+        compute_projection(alpha, direction):
+            Computes a projection matrix interpolated between the direction outer product and the identity matrix.
+        forward(x, vlm_reward_type):
+            Computes the reward for the given input tensor `x` according to the specified reward type.
+        forward_vlm_rl(x):
+            Computes the VLM-RL reward as the difference between the similarity to the first and second target.
+        forward_lord(x):
+            Computes the LORD reward as one minus the similarity to the targets.
+        forward_vlm_rm(x):
+            Computes the VLM-RM reward using the projection matrix and the distance to the targets.
+        forward_vlm_sr(x):
+            Computes the VLM-SR or RoboCLIP reward as the similarity to the targets.
+        get_pos_neg(x):
+            Returns the positive and negative similarities to the targets.
+        tokenize_prompts(x):
+            Tokenizes a list of prompt strings using OpenCLIP.
+        embed_prompts(x):
+            Embeds a list of prompts using the CLIP model.
+        embed_images(x):
+            Embeds images using the CLIP model.
+    """
     def __init__(
             self,
             *,
