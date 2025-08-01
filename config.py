@@ -10,7 +10,7 @@ import torch.nn as nn
 import gymnasium as gym
 import torch
 
-MODEL_URL = "ViT-g-14/laion2b_s12b_b42k"
+MODEL_URL = "ViT-bigG-14/laion2b_s39b_b160k"
 
 class CustomCNN(nn.Module):
     def __init__(self, input_shape, features_dim=1):
